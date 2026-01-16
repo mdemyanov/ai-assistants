@@ -1,0 +1,80 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'system-prompts/**'
+
+jobs:
+  validate-skills:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate all skills
+        run: |
+          cd skills
+          python ../scripts/validate_all.py .
+
+      - name: Check skill frontmatter
+        run: |
+          for skill_dir in skills/*/; do
+            if [ -f "${skill_dir}SKILL.md" ]; then
+              echo "Checking ${skill_dir}SKILL.md"
+              # Extract and validate frontmatter
+              head -20 "${skill_dir}SKILL.md" | grep -E "^name:|^description:" || {
+                echo "ERROR: Missing name or description in ${skill_dir}SKILL.md"
+                exit 1
+              }
+            fi
+          done
+
+  lint-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Lint Python files
+        run: ruff check skills/ scripts/ --ignore E501
+        continue-on-error: true
+
+  lint-shell:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Lint shell scripts
+        run: |
+          find . -name "*.sh" -type f | while read script; do
+            echo "Checking $script"
+            shellcheck "$script" || true
+          done

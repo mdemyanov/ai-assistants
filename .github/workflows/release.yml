@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Create dist directory
+        run: mkdir -p dist
+
+      - name: Package skills (without version - for latest download)
+        run: |
+          cd skills
+          python package_skills.py . ../dist --all --no-guide --no-version
+
+      - name: Package skills (with version - for specific version download)
+        run: |
+          cd skills
+          python package_skills.py . ../dist --all --no-guide
+
+      - name: List packaged skills
+        run: ls -la dist/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

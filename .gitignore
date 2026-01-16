@@ -1,0 +1,42 @@
+# Environment and secrets
+.env
+.env.local
+.env.*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Obsidian (local settings)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+
+# Claude Code
+.claude/
+
+# Local archives (will be created by CI/CD)
+releases/dist/*.zip
+
+# Temporary files
+*.tmp
+*.temp
+*.log
