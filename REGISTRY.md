@@ -1,7 +1,7 @@
 ---
 tags: [index, registry]
 created: 2025-05-28
-updated: 2026-01-16
+updated: 2026-01-20
 ---
 
 # Prompt & Skill Registry
@@ -40,6 +40,7 @@ SORT status ASC, file.name ASC
 
 ### Промты
 - [[prompt-engineer-assistant_v3.0.0]] — Мета-ассистент v3 (промты, skills, субагенты, хуки, CI/CD)
+- [[kb-setup-wizard_v1.0.0]] — Мастер настройки базы знаний руководителя (интерактивный onboarding, установка инструментов, skills)
 - [[cbt-therapist-assistant_v1.1.0]] — Ассистент КПТ-психолога (анализ сессий, концептуализация, супервизия)
 - [[cbt-cognitive-model-extractor_v1.0.0]] — Экстрактор когнитивной модели (ситуации → АМ → эмоции → физиология)
 - [[aigrep-developer_v1.1.0]] — Ассистент разработки aigrep (Python, SQLite + LanceDB, MCP, LLM)
@@ -56,6 +57,7 @@ SORT status ASC, file.name ASC
 - [[public-speaking/_meta|public-speaking]] — Подготовка публичных выступлений (структура, аргументация, подача)
 - [[cbt-session-analyzer/_meta|cbt-session-analyzer]] — Анализ КПТ-сессий (транскрипты, техники, концептуализация)
 - [[aigrep/_meta|aigrep]] — Работа с базами знаний через aigrep MCP (SQLite + LanceDB, семантический поиск)
+- [[tg-parser/_meta|tg-parser]] — Обработка экспортов Telegram Desktop (MCP + CLI, дайджесты, фильтрация, chunking)
 
 ### Шаблоны
 - [[prompt-template]] — Шаблон для системных промтов
@@ -84,7 +86,27 @@ SORT status ASC, file.name ASC
 
 ## Changelog
 
+### 2026-01-20
+- Добавлен skill [[tg-parser/_meta|tg-parser]] v1.0.0:
+  - Обработка JSON-экспортов Telegram Desktop через tg-parser (v1.2.0)
+  - Dual-mode: MCP tools (Claude Desktop) + CLI через Bash (Claude Code)
+  - Автоопределение режима работы
+  - 7 use cases: дайджест, лог решений, анализ топиков, активность, упоминания, KB, заметки
+  - 9 фильтров: дата, отправитель, топик, содержимое, упоминания, вложения, реакции, пересылка, сервисные
+  - 4 формата вывода: markdown, json, csv, kb-template
+  - 4 стратегии chunking: fixed, conversation, topic, daily
+  - References: filters.md, cli-reference.md, output-formats.md
+
 ### 2026-01-16
+- Добавлен промт [[kb-setup-wizard_v1.0.0]] v1.0.0:
+  - Интерактивный мастер настройки базы знаний руководителя
+  - 7 этапов: onboarding → структура → файлы → инструменты → skills → MCP → верификация
+  - Установка: Homebrew, Ollama, UV, aigrep
+  - Skills: meeting-prep, meeting-debrief, correspondence-2, public-speaking, aigrep
+  - Встроенные шаблоны: CLAUDE.md, CLAUDE_DESKTOP.md, Dashboard.md, 5 типов документов
+  - Структура Johnny Decimal (00-99)
+  - Для нетехнических руководителей: пошаговые инструкции с пояснениями
+
 - **Ренейминг obsidian-kb → aigrep:**
   - Skill `obsidian-kb` переименован в `aigrep`
   - Все MCP-вызовы обновлены: `obsidian-kb:` → `aigrep:`
