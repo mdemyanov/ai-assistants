@@ -1,18 +1,23 @@
 ---
 id: aigrep
-version: 1.3.0
+version: 1.3.1
 created: 2026-01-06
-updated: 2026-01-16
+updated: 2026-01-21
 author: Max Demyanov
 status: active
 type: skill
-tags: [skill, obsidian, knowledge-base, mcp, search, sqlite, lancedb, aigrep]
+tags: [skill, obsidian, knowledge-base, mcp, search, sqlite, lancedb, aigrep, cli]
 aigrep_version: 2.0.9
 ---
 
 # Метаданные skill aigrep
 
 ## Changelog
+
+### 1.3.1 (2026-01-21)
+- **CLI для Claude Code:** добавлена секция с CLI-командами для операций, недоступных через MCP
+- Документированы: doctor, watch, install-service, cluster, config
+- Добавлена таблица "CLI vs MCP: когда что использовать"
 
 ### 1.3.0 (2026-01-16)
 - **Переименование:** obsidian-kb → aigrep (соответствует актуальному названию проекта)

@@ -23,15 +23,29 @@
 |--------|-------|-----------|
 | **Dataview** | Динамические запросы | Включить JavaScript Queries |
 | **Templater** | Шаблоны с переменными | Указать папку шаблонов |
-| **Local REST API** | HTTP API для Claude | Включить HTTPS, скопировать API Key |
-| **MCP Tools** | MCP-сервер | — |
 
-### 3. Настройка Local REST API
+### 3. Установка aigrep MCP server
 
-`Settings → Local REST API`:
-- ✅ Enable HTTPS
-- Порт: 27124 (по умолчанию)
-- **Скопировать API Key** — понадобится далее
+aigrep — семантический поиск по базе знаний через MCP.
+
+**Требования:**
+- Homebrew (macOS)
+- Ollama для локальных эмбеддингов
+
+```bash
+# Установить Homebrew (если нет)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Установить Ollama
+brew install ollama
+
+# Запустить Ollama и загрузить модель
+ollama serve &
+ollama pull mxbai-embed-large
+
+# Установить UV (Python package manager)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
 ### 4. Установка Claude Desktop
 
@@ -56,12 +70,11 @@
 ```json
 {
   "mcpServers": {
-    "obsidian-mcp": {
-      "command": "/путь/к/vault/.obsidian/plugins/mcp-tools/bin/mcp-server",
-      "args": [],
+    "aigrep": {
+      "command": "uvx",
+      "args": ["--from", "aigrep", "aigrep-mcp"],
       "env": {
-        "OBSIDIAN_API_KEY": "ваш-api-key-из-local-rest-api",
-        "OBSIDIAN_API_URL": "https://127.0.0.1:27124"
+        "AIGREP_VAULTS": "/путь/к/vault:Название_vault"
       }
     }
   }
@@ -69,17 +82,23 @@
 ```
 
 **⚠️ Замените:**
-- `/путь/к/vault/` — на реальный путь к вашему vault
-- `ваш-api-key` — на API Key из Local REST API
+- `/путь/к/vault` — на реальный путь к вашему Obsidian vault
+- `Название_vault` — имя для обращения к vault (без пробелов)
 
-### 6. Перезапуск и проверка
+**Пример:**
+```json
+"AIGREP_VAULTS": "/Users/john/Documents/MyKnowledge:MyKB"
+```
+
+### 6. Первый запуск и индексация
 
 1. Полностью закрыть Claude Desktop
-2. Убедиться, что Obsidian запущен с открытым vault
+2. Убедиться, что Ollama запущен (`ollama serve`)
 3. Запустить Claude Desktop
-4. Проверить в чате:
+4. При первом обращении aigrep проиндексирует vault (может занять несколько минут)
+5. Проверить в чате:
    ```
-   Покажи список файлов в корне vault
+   Покажи статистику vault
    ```
 
 ---
@@ -115,39 +134,34 @@ Vault/
 
 ### MCP не подключается
 
-**Проверка 1:** Obsidian запущен?
+**Проверка 1:** Ollama запущен?
 ```bash
-# macOS
-lsof -i :27124
+curl http://localhost:11434/api/tags
+```
+Должен вернуть список моделей.
+
+**Проверка 2:** UV установлен?
+```bash
+uv --version
 ```
 
-**Проверка 2:** API Key корректный?
+**Проверка 3:** aigrep работает?
 ```bash
-curl -k -H "Authorization: Bearer YOUR_API_KEY" \
-  https://127.0.0.1:27124/
-```
-Должен вернуть: `{"authenticated": true}`
-
-**Проверка 3:** Путь к mcp-server корректный?
-```bash
-ls -la /путь/к/vault/.obsidian/plugins/mcp-tools/bin/mcp-server
+uvx --from aigrep aigrep-mcp --help
 ```
 
 ### Несколько vault'ов
 
-Каждому vault — свой порт:
-- Vault 1: порт 27124
-- Vault 2: порт 27125
-
-В конфиге — отдельные записи:
+В переменной `AIGREP_VAULTS` через запятую:
 ```json
 {
   "mcpServers": {
-    "vault1-mcp": {
-      "env": { "OBSIDIAN_API_URL": "https://127.0.0.1:27124" }
-    },
-    "vault2-mcp": {
-      "env": { "OBSIDIAN_API_URL": "https://127.0.0.1:27125" }
+    "aigrep": {
+      "command": "uvx",
+      "args": ["--from", "aigrep", "aigrep-mcp"],
+      "env": {
+        "AIGREP_VAULTS": "/path/to/vault1:Vault1,/path/to/vault2:Vault2"
+      }
     }
   }
 }
@@ -168,38 +182,49 @@ ls -la /путь/к/vault/.obsidian/plugins/mcp-tools/bin/mcp-server
 - [ ] Создан vault
 - [ ] Установлен Dataview
 - [ ] Установлен Templater
-- [ ] Установлен Local REST API
-- [ ] Установлен MCP Tools
-- [ ] Настроен Local REST API (API Key скопирован)
+
+### aigrep
+- [ ] Установлен Homebrew
+- [ ] Установлен Ollama
+- [ ] Загружена модель mxbai-embed-large
+- [ ] Установлен UV
 
 ### Claude Desktop
 - [ ] Установлен Claude Desktop
 - [ ] Создан claude_desktop_config.json
-- [ ] Указан путь к mcp-server
-- [ ] Указан API Key и URL
+- [ ] Указан путь к vault в AIGREP_VAULTS
 - [ ] Перезапущен Claude Desktop
 
 ### Проверка
-- [ ] Claude видит файлы vault
-- [ ] Семантический поиск работает
-- [ ] Файлы создаются корректно
+- [ ] Claude видит vault (vault_stats работает)
+- [ ] Семантический поиск работает (search_vault)
+- [ ] Файлы читаются корректно
 
 ---
 
-## Полезные команды Claude
+## Полезные команды aigrep
 
 ```
-# Семантический поиск по смыслу
-search_vault_smart: "проблемы с производительностью"
+# Семантический поиск (по смыслу)
+aigrep:search_vault
+  vault_name: "MyKB"
+  query: "проблемы с производительностью"
+  search_type: "hybrid"
+  limit: 10
 
-# Текстовый поиск
-search_vault_simple: "Иванов"
+# Текстовый поиск (точное совпадение)
+aigrep:search_vault
+  vault_name: "MyKB"
+  query: "Иванов"
+  search_type: "fts"
+  limit: 10
 
-# Список файлов в папке
-list_vault_files: directory="07_PEOPLE"
+# Статистика vault
+aigrep:vault_stats
+  vault_name: "MyKB"
 
-# Чтение файла
-get_vault_file: filename="Dashboard.md"
+# Список vault'ов
+aigrep:list_vaults
 ```
 
 ---

@@ -1,7 +1,7 @@
 ---
 tags: [index, registry]
 created: 2025-05-28
-updated: 2026-01-20
+updated: 2026-01-23
 ---
 
 # Prompt & Skill Registry
@@ -58,6 +58,7 @@ SORT status ASC, file.name ASC
 - [[cbt-session-analyzer/_meta|cbt-session-analyzer]] — Анализ КПТ-сессий (транскрипты, техники, концептуализация)
 - [[aigrep/_meta|aigrep]] — Работа с базами знаний через aigrep MCP (SQLite + LanceDB, семантический поиск)
 - [[tg-parser/_meta|tg-parser]] — Обработка экспортов Telegram Desktop (MCP + CLI, дайджесты, фильтрация, chunking)
+- [[infoinstyle/_meta|infoinstyle]] — Адаптация текстов под инфостиль (убрать ИИ-паттерны, канцелярит, добавить конкретику)
 
 ### Шаблоны
 - [[prompt-template]] — Шаблон для системных промтов
@@ -85,6 +86,15 @@ SORT status ASC, file.name ASC
 ---
 
 ## Changelog
+
+### 2026-01-23
+- Добавлен skill [[infoinstyle/_meta|infoinstyle]] v1.0.0:
+  - Адаптация ИИ-текстов под инфостиль по методологии Ильяхова
+  - 20 паттернов ИИ-текста по 4 категориям: Content, Language, Style, Communication
+  - Три режима: quick (критичное), standard (полный workflow), deep (переработка)
+  - References: ai-patterns.md (диагностика), ilyahov-rules.md (правила трансформации)
+  - Assets: examples-before-after.md (6 примеров до/после)
+  - Добавлена команда `/edit` (алиас `/e`) в CLAUDE.md
 
 ### 2026-01-20
 - Добавлен skill [[tg-parser/_meta|tg-parser]] v1.0.0:

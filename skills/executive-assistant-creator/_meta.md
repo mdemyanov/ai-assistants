@@ -1,12 +1,12 @@
 ---
 id: executive-assistant-creator
-version: 1.0.0
+version: 1.1.0
 created: 2025-12-09
-updated: 2025-12-09
+updated: 2026-01-16
 author: Max Demyanov
 status: active
 type: skill
-tags: [skill, assistant, executive, onboarding, obsidian]
+tags: [skill, assistant, executive, onboarding, obsidian, aigrep]
 ---
 
 # Executive Assistant Creator
@@ -45,3 +45,21 @@ Skill для создания персонального AI-ассистента
 
 - [[SKILL]] — основной файл skill
 - [[prompt-creator/_meta|prompt-creator]] — создание промтов (можно использовать совместно)
+- [[aigrep/_meta|aigrep]] — работа с базой знаний через MCP
+
+## Changelog
+
+### v1.1.0 (2026-01-16)
+
+**Миграция на aigrep:**
+- Обновлена техническая настройка: obsidian-mcp → aigrep MCP server
+- Упрощена установка: UV + Ollama вместо Obsidian плагинов
+- Обновлены команды поиска: `search_vault_smart/simple` → `aigrep:search_vault`
+- Обновлены шаблоны: claude-md-template.md, tech-setup.md
+
+### v1.0.0 (2025-12-09)
+
+- Начальная версия
+- 5-этапный workflow создания ассистента
+- Поддержка ролей: CTO, CPO, COO, HR, PM
+- Шаблоны: system-prompt, claude-md, tech-setup

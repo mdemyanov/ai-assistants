@@ -96,9 +96,10 @@ Vault/
 ### Этап 5: Техническая настройка
 
 Предоставить инструкцию по настройке:
-1. Obsidian + плагины (Dataview, Templater, Local REST API, MCP Tools)
-2. Claude Desktop + MCP конфигурация
-3. Проверка подключения
+1. Obsidian + плагины (Dataview, Templater)
+2. aigrep MCP server (семантический поиск)
+3. Claude Desktop + MCP конфигурация
+4. Проверка подключения
 
 **Инструкция:** см. `references/templates/tech-setup.md`
 

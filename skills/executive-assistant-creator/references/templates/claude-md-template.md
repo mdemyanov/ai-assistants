@@ -18,21 +18,25 @@
 | Инструмент | Когда использовать |
 |------------|-------------------|
 | **Filesystem** | Чтение, создание, редактирование файлов |
-| **obsidian-mcp** | Семантический поиск по смыслу, работа с vault |
+| **aigrep** | Семантический поиск по смыслу, работа с vault |
 
-### obsidian-mcp — быстрый справочник
+### aigrep — быстрый справочник
 
 # Поиск по смыслу (семантический)
-search_vault_smart: "ключевые слова или фраза"
+aigrep:search_vault
+  vault_name: "[vault]"
+  query: "ключевые слова или фраза"
+  search_type: "hybrid"
 
 # Поиск по тексту (точное совпадение)
-search_vault_simple: "конкретный текст"
+aigrep:search_vault
+  vault_name: "[vault]"
+  query: "конкретный текст"
+  search_type: "fts"
 
-# Список файлов в папке
-list_vault_files: directory="07_PEOPLE"
-
-# Чтение файла
-get_vault_file: filename="Dashboard.md"
+# Статистика vault
+aigrep:vault_stats
+  vault_name: "[vault]"
 
 ---
 
@@ -79,7 +83,7 @@ get_vault_file: filename="Dashboard.md"
 | Задача | Действие |
 |--------|----------|
 | **Консультация** | Прочитай контекст → дай совет с обоснованием |
-| **Поиск** | `search_vault_smart` для семантического поиска |
+| **Поиск** | `aigrep:search_vault` с `search_type: "hybrid"` |
 | **Создать решение** | Используй `template_decision.md` → сохрани в `05_DECISIONS/` |
 | **Записать 1-1** | Используй `template_1-1.md` → сохрани в `07_PEOPLE/{name}/1-1/` |
 | **Анализ** | Прочитай файлы → структурируй → предложи решение |

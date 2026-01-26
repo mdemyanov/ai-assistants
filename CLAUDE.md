@@ -1,3 +1,9 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
+
 # AI Assistants Project
 
 **Репозиторий:** https://github.com/mdemyanov/ai-assistants
@@ -9,8 +15,8 @@
 ```
 ├── .github/workflows/    # CI/CD (release.yml, validate.yml)
 ├── system-prompts/       # Системные промты для Claude Desktop
-├── skills/               # Навыки (11 активных)
-├── scripts/              # CLI утилиты
+├── skills/               # Навыки (см. REGISTRY.md для актуального списка)
+├── scripts/              # CLI утилиты (Python 3.10+)
 ├── templates/            # Шаблоны (subagent, hook)
 ├── archive/              # Старые версии
 └── REGISTRY.md           # Реестр всех компонентов
@@ -31,6 +37,8 @@
 | Подготовиться к встрече | `skills/meeting-prep/SKILL.md` |
 | Обработать встречу | `skills/meeting-debrief/SKILL.md` |
 | Работа с базой знаний (aigrep) | `skills/aigrep/SKILL.md` |
+| Обработать Telegram экспорт | `skills/tg-parser/SKILL.md` |
+| Отредактировать текст / убрать ИИ | `skills/infoinstyle/SKILL.md` |
 
 ## Команды
 
@@ -44,6 +52,21 @@
 | `/list` | Покажи содержимое `REGISTRY.md` |
 | `/status` | Покажи структуру проекта и доступные skills |
 | `/release` | Создай релиз: `git tag v[X.Y.Z] && git push --tags` |
+| `/search <query>` | Поиск в базе знаний через aigrep (vault: `ai-assistants`) |
+| `/validate` | Запусти `python3 scripts/validate_all.py skills/` |
+| `/edit` | Читай `skills/infoinstyle/SKILL.md` → редактируй текст в инфостиле |
+
+### Алиасы
+
+| Короткая | Полная |
+|----------|--------|
+| `/p` | `/new prompt` |
+| `/s` | `/new skill` |
+| `/r` | `/review` |
+| `/v` | `/validate` |
+| `/e` | `/edit` |
+
+**При получении алиаса — выполняй соответствующую полную команду.**
 
 ## Версионирование
 
@@ -65,11 +88,52 @@
 - Актуальная версия: `https://github.com/mdemyanov/ai-assistants/releases/latest/download/{skill-name}.zip`
 - Конкретная версия: `https://github.com/mdemyanov/ai-assistants/releases/download/v{X.Y.Z}/{skill-name}_v{X.Y.Z}.zip`
 
-## Валидация
+## Валидация и линтинг
 
 ```bash
+# Валидация всех skills (требует pyyaml)
 python3 scripts/validate_all.py skills/
+
+# Линтинг Python (CI использует ruff)
+ruff check skills/ scripts/ --ignore E501
+
+# Линтинг shell-скриптов (опционально)
+shellcheck scripts/*.sh
 ```
+
+## Быстрый поиск (aigrep)
+
+Vault: `ai-assistants`
+
+| Задача | Команда |
+|--------|---------|
+| Найти skill | `search_vault("ai-assistants", "skill-name")` |
+| По типу | `search_vault("ai-assistants", "type:skill")` |
+| Изменения за неделю | `recent_changes("ai-assistants", days=7)` |
+| Статистика vault | `vault_stats("ai-assistants")` |
+
+## Хуки
+
+### Claude Code хуки
+Располагаются в `.claude/hooks/`:
+- `pre-tool/` — валидация перед операцией
+- `post-tool/` — действия после операции
+
+Создание: `/new hook` или `skills/nau-skill-creator/references/hooks.md`
+
+### Git хуки
+
+```bash
+# Установка всех хуков
+./scripts/install-hooks.sh
+
+# Или вручную
+cp scripts/git-hooks/pre-commit .git/hooks/ && chmod +x .git/hooks/pre-commit
+```
+
+| Хук | Назначение |
+|-----|------------|
+| `pre-commit` | Валидация skills + shellcheck для .sh файлов |
 
 ## Стандарты
 

@@ -8,6 +8,8 @@ on:
     paths:
       - 'skills/**'
       - 'system-prompts/**'
+      - '.claude/hooks/**'
+      - 'scripts/**'
 
 jobs:
   validate-skills:
@@ -78,3 +80,15 @@ jobs:
             echo "Checking $script"
             shellcheck "$script" || true
           done
+
+      - name: Lint Claude hooks
+        run: |
+          if [ -d ".claude/hooks" ]; then
+            echo "Checking Claude hooks..."
+            find .claude/hooks -name "*.sh" -type f | while read hook; do
+              echo "Validating hook: $hook"
+              shellcheck "$hook" || echo "Warning: $hook has issues"
+            done
+          else
+            echo "No .claude/hooks directory found, skipping"
+          fi

@@ -1,0 +1,34 @@
+# Конфигурация vault для aigrep
+# Проект: AI Assistants
+
+vaults:
+  ai-assistants:
+    path: /Users/mdemyanov/Documents/AI assistants
+    description: "Skills, промты и документация для Claude"
+
+    include:
+      - "*.md"
+      - "skills/**/*.md"
+      - "system-prompts/**/*.md"
+      - "templates/**/*.md"
+
+    exclude:
+      - "archive/**"
+      - ".git/**"
+      - "releases/**"
+      - "dist/**"
+      - ".obsidian/**"
+      - "node_modules/**"
+      - "**/*.py"
+      - "**/*.sh"
+      - "**/*.json"
+      - "**/*.yaml"
+      - "**/*.yml"
+
+# Настройки индексации
+indexing:
+  chunk_size: 512
+  chunk_overlap: 50
+
+# Провайдер по умолчанию
+default_provider: ollama

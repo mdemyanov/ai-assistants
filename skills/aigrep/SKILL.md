@@ -142,14 +142,73 @@ get_job_status(job_id="xxx")
 cancel_job(job_id="xxx")
 ```
 
-## Ограничения
+## Ограничения и известные проблемы
 
 - **Даты** — фильтр `created:>` работает нестабильно, используй `timeline`
 - **Имена** — поиск по русским именам ненадёжен, используй ID
+- **links:** — фильтр требует полный путь (не `links:vshadrin`, а `links:10_PEOPLE/vshadrin/vshadrin`)
+- **test_retrieval** — функция падает с AttributeError в v2.0.9
+- **Комбинация фильтров** — `type:X links:Y` может работать некорректно, разделяй на 2 запроса
+- **Enrichment** — по умолчанию отключен, указывай `enrichment="contextual"` при reindex
 - **Миграция** — при обновлении с v1.x требуется полная переиндексация
+
+> Подробнее: `references/known-issues.md`
+
+## CLI команды (для Claude Code)
+
+При работе в Claude Code (с доступом к Bash) некоторые операции удобнее через CLI.
+
+> **Путь:** CLI требует `uv run aigrep` из директории проекта или глобальной установки.
+
+### Диагностика
+
+```bash
+uv run aigrep doctor                    # Полная проверка системы
+uv run aigrep doctor --check ollama     # Только Ollama
+uv run aigrep doctor --json             # JSON для парсинга
+```
+
+### Фоновые процессы (CLI only)
+
+```bash
+uv run aigrep watch --vault "X"         # Автообновление при изменениях
+uv run aigrep install-service           # Установить автозапуск (macOS)
+uv run aigrep service-status            # Статус сервиса
+```
+
+### Тонкая настройка индексации
+
+```bash
+uv run aigrep reindex --vault "X" --max-workers 4 --no-enrichment
+uv run aigrep index --vault "X" --path "/path" --enrichment-strategy fast
+```
+
+### Кластеризация (CLI only)
+
+```bash
+uv run aigrep cluster --vault "X"       # Группировка похожих документов
+```
+
+### Конфигурация
+
+```bash
+uv run aigrep config show               # Текущая конфигурация
+uv run aigrep config add-vault --name "X" --path "/path"
+uv run aigrep claude-config --apply     # Применить конфиг для Claude Desktop
+```
+
+### CLI vs MCP: когда что использовать
+
+| Задача | Рекомендация |
+|--------|--------------|
+| Поиск, граф связей, dataview | **MCP** — богаче API |
+| Диагностика, watch, сервисы | **CLI** — больше контроля |
+| Переиндексация с параметрами | **CLI** — max-workers, clustering |
+| Управление провайдерами | **MCP** — удобнее в контексте агента |
 
 ## Resources
 
 - `references/tools-reference.md` — полный справочник 50+ инструментов
 - `references/query-patterns.md` — детальные паттерны запросов
 - `references/intent-detection.md` — как работает auto-intent
+- `references/known-issues.md` — известные проблемы и workarounds

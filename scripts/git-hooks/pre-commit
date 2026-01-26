@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Git pre-commit hook: валидация skills перед коммитом
+# Установка: cp scripts/git-hooks/pre-commit .git/hooks/ && chmod +x .git/hooks/pre-commit
+
+set -euo pipefail
+
+echo "Running pre-commit validation..."
+
+# Проверяем, есть ли изменения в skills/
+CHANGED_SKILLS=$(git diff --cached --name-only | grep "^skills/" || true)
+
+if [ -n "$CHANGED_SKILLS" ]; then
+    echo "Validating changed skills..."
+
+    # Запускаем валидацию
+    if command -v python3 &> /dev/null; then
+        python3 scripts/validate_all.py skills/ || {
+            echo ""
+            echo "ERROR: Skills validation failed!"
+            echo "Fix the issues above before committing."
+            exit 1
+        }
+    else
+        echo "Warning: python3 not found, skipping validation"
+    fi
+
+    echo "Skills validation passed."
+else
+    echo "No skills changed, skipping validation."
+fi
+
+# Проверяем shell скрипты через shellcheck (если установлен)
+CHANGED_SCRIPTS=$(git diff --cached --name-only | grep "\.sh$" || true)
+
+if [ -n "$CHANGED_SCRIPTS" ]; then
+    if command -v shellcheck &> /dev/null; then
+        echo "Linting shell scripts..."
+        for script in $CHANGED_SCRIPTS; do
+            if [ -f "$script" ]; then
+                shellcheck "$script" || {
+                    echo "Warning: ShellCheck found issues in $script"
+                }
+            fi
+        done
+    fi
+fi
+
+echo "Pre-commit checks passed."
+exit 0
