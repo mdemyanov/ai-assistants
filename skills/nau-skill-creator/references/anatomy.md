@@ -113,10 +113,36 @@ description: Comprehensive description with triggers
 - `hello-world/` — boilerplate проект
 - `font.ttf` — шрифт
 
+## _meta.md (локальные метаданные)
+
+Файл `_meta.md` содержит локальные метаданные skill, не включаемые в распространяемую версию.
+
+**Поля frontmatter:**
+
+```yaml
+---
+id: skill-name              # идентификатор
+version: 1.0.0              # версия
+source: https://github.com/owner/repo  # URL репозитория для обновления
+source_path: path/to/skill  # путь внутри репозитория (опционально)
+created: 2026-01-01         # дата создания
+updated: 2026-01-01         # дата обновления
+author: Name                # автор
+status: active              # статус: active | draft | deprecated
+type: skill                 # тип компонента
+tags: [tag1, tag2]          # теги для поиска
+---
+```
+
+**Обновление из source:**
+```bash
+python scripts/update_skill.py skills/skill-name
+```
+
 ## Что НЕ включать
 
 ❌ README.md
-❌ INSTALLATION_GUIDE.md  
+❌ INSTALLATION_GUIDE.md
 ❌ QUICK_REFERENCE.md
 ❌ CHANGELOG.md
 ❌ Документация процесса создания

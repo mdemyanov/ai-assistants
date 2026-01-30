@@ -59,6 +59,7 @@ SORT status ASC, file.name ASC
 - [[aigrep/_meta|aigrep]] — Работа с базами знаний через aigrep MCP (SQLite + LanceDB, семантический поиск)
 - [[tg-parser/_meta|tg-parser]] — Обработка экспортов Telegram Desktop (MCP + CLI, дайджесты, фильтрация, chunking)
 - [[infoinstyle/_meta|infoinstyle]] — Адаптация текстов под инфостиль (убрать ИИ-паттерны, канцелярит, добавить конкретику)
+- [[gramax/_meta|gramax]] — Создание и редактирование документации Gramax (markdown + XML-блоки)
 
 ### Шаблоны
 - [[prompt-template]] — Шаблон для системных промтов
@@ -86,6 +87,19 @@ SORT status ASC, file.name ASC
 ---
 
 ## Changelog
+
+### 2026-01-30
+- Обновлён skill [[gramax/_meta|gramax]] до v1.1.0:
+  - Добавлен раздел «Workflow» — проверка .doc-root.yaml при первой операции
+  - Добавлен раздел «Нейминг» — правила транслитерации файлов и папок
+  - Добавлена операция «Редактировать комментарий»
+  - Добавлен раздел «Данные автора» — запрос email/имени при первом комментарии
+- Добавлен skill [[gramax/_meta|gramax]] v1.0.0:
+  - Создание и редактирование документации в формате Gramax
+  - Совместимость с визуальным редактором Gramax
+  - Поддержка XML-блоков: note, tabs, view, snippet, mermaid, openapi, video, html
+  - Bootstrap-шаблоны для новых репозиториев
+  - References: blocks.md (детальная документация блоков)
 
 ### 2026-01-23
 - Добавлен skill [[infoinstyle/_meta|infoinstyle]] v1.0.0:

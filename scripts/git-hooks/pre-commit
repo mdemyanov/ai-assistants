@@ -12,8 +12,15 @@ CHANGED_SKILLS=$(git diff --cached --name-only | grep "^skills/" || true)
 if [ -n "$CHANGED_SKILLS" ]; then
     echo "Validating changed skills..."
 
-    # Запускаем валидацию
-    if command -v python3 &> /dev/null; then
+    # Запускаем валидацию (uv предпочтительнее для автоустановки зависимостей)
+    if command -v uv &> /dev/null; then
+        uv run scripts/validate_all.py skills/ || {
+            echo ""
+            echo "ERROR: Skills validation failed!"
+            echo "Fix the issues above before committing."
+            exit 1
+        }
+    elif command -v python3 &> /dev/null; then
         python3 scripts/validate_all.py skills/ || {
             echo ""
             echo "ERROR: Skills validation failed!"
@@ -21,7 +28,7 @@ if [ -n "$CHANGED_SKILLS" ]; then
             exit 1
         }
     else
-        echo "Warning: python3 not found, skipping validation"
+        echo "Warning: python3/uv not found, skipping validation"
     fi
 
     echo "Skills validation passed."
