@@ -1,0 +1,37 @@
+---
+order: {{ order | default(1) }}
+title: "{{ id | default('E-XX-NNN') }}: {{ title }}"
+properties:
+  - name: Тип сущности
+    value: [Эпик]
+  - name: ID
+    value: [{{ id | default('E-XX-NNN') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Родительская цель
+    value: [{{ parent_goal }}]
+  - name: Приоритет
+    value: [{{ priority | default('P1') }}]
+  - name: Статус
+    value: [{{ status | default('Черновик') }}]
+  - name: Размер
+    value: [{{ size | default('M') }}]
+  - name: Источник BRQ
+    value: [{{ source_brq }}]
+---
+
+## Описание
+
+{{ description | default('_Описание scope эпика_') }}
+
+## Фичи
+
+<view defs="Тип сущности=Стейкхолдер&JTBD&Цель&Эпик&User Story&Процесс&Сущность&Бизнес-правило&Релиз&none,Эпик={{ id }}" display="List"/>
+
+## User Stories
+
+<view defs="Тип сущности=Стейкхолдер&JTBD&Цель&Эпик&Фича&Процесс&Сущность&Бизнес-правило&Релиз&none,Эпик={{ id }}" groupby="Фича" display="List"/>

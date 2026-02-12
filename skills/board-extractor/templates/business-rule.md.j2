@@ -1,0 +1,50 @@
+---
+order: {{ order | default(1) }}
+title: {{ title }}
+properties:
+  - name: Тип сущности
+    value: [Бизнес-правило]
+  - name: Тип правила
+    value: [{{ rule_type | default('Валидация') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+---
+
+{{ description | default('_Описание бизнес-правила_') }}
+
+## Условие
+
+```
+{{ condition | default('ЕСЛИ [условие]') }}
+```
+
+## Действие
+
+```
+{{ action | default('ТО [действие]') }}
+```
+
+{% if exception %}
+## Исключение
+
+```
+{{ exception }}
+```
+
+{% endif %}
+{% if examples %}
+## Примеры
+
+{{ examples }}
+
+{% endif %}
+{% if related_objects %}
+## Связанные объекты
+
+{{ related_objects }}
+
+{% endif %}

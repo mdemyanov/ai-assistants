@@ -1,0 +1,46 @@
+---
+order: {{ order | default(1) }}
+title: {{ title }}
+properties:
+  - name: Тип сущности
+    value: [Термин]
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+{% if sub_domain %}
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+{% endif %}
+{% if aliases %}
+  - name: Синонимы
+    value: {{ aliases }}
+{% endif %}
+---
+
+## Определение
+
+{{ definition | default('_Определение термина_') }}
+
+{% if context %}
+## Контекст использования
+
+{{ context }}
+
+{% endif %}
+{% if examples %}
+## Примеры
+
+{{ examples }}
+
+{% endif %}
+{% if not_confused_with %}
+## Не путать с
+
+{{ not_confused_with }}
+
+{% endif %}
+{% if related_terms %}
+## Связанные термины
+
+{{ related_terms }}
+
+{% endif %}

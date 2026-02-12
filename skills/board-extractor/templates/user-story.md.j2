@@ -1,0 +1,44 @@
+---
+order: {{ order | default(1) }}
+title: "{{ id | default('US-XXX') }}: {{ title }}"
+properties:
+  - name: Тип сущности
+    value: [User Story]
+  - name: Тип требования
+    value: [{{ requirement_type | default('User Story') }}]
+  - name: ID
+    value: [{{ id | default('US-XXX') }}]
+  - name: Стейкхолдер
+    value: [{{ stakeholder }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Эпик
+    value: [{{ epic }}]
+{% if feature %}
+  - name: Фича
+    value: [{{ feature }}]
+{% endif %}
+  - name: Приоритет
+    value: [{{ priority | default('P2') }}]
+  - name: Статус
+    value: [{{ status | default('Черновик') }}]
+---
+
+{{ story_format | default('Как') }} **{{ role | default(stakeholder) }}**, {{ story_action | default('хочу') }} **{{ action }}**, чтобы **{{ benefit }}**.
+
+{% if acceptance_criteria %}
+## Критерии приёмки
+
+{{ acceptance_criteria }}
+
+{% endif %}
+{% if notes %}
+## Примечания
+
+{{ notes }}
+
+{% endif %}

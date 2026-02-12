@@ -1,0 +1,31 @@
+---
+order: {{ order | default(1) }}
+title: "{{ id | default('G-XXX-NNN') }}: {{ title }}"
+properties:
+  - name: Тип сущности
+    value: [Цель]
+  - name: ID
+    value: [{{ id | default('G-XXX-NNN') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Приоритет
+    value: [{{ priority | default('P1') }}]
+  - name: Статус
+    value: [{{ status | default('Черновик') }}]
+---
+
+## Описание
+
+{{ description | default('_Описание бизнес-цели_') }}
+
+## Ключевые результаты
+
+{{ key_results | default('- _KR 1_\n- _KR 2_') }}
+
+## Эпики
+
+<view defs="Родительская цель={{ id }},Тип сущности=Стейкхолдер&JTBD&Цель&Фича&User Story&Процесс&Сущность&Бизнес-правило&Релиз&none" display="List"/>

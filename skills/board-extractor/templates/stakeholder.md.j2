@@ -1,0 +1,59 @@
+---
+order: {{ order | default(1) }}
+title: {{ title }}
+properties:
+  - name: Тип сущности
+    value: [Стейкхолдер]
+  - name: Категория стейкхолдера
+    value: [{{ category | default('Внутренний') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Уровень влияния
+    value: [{{ influence_level | default('Средний') }}]
+{% if raci %}
+  - name: RACI
+    value: [{{ raci }}]
+{% endif %}
+---
+
+## Пользователь
+
+### Интересы
+
+{{ interests | default('_Что важно для этой роли в контексте продукта_') }}
+
+### Боли и проблемы
+
+{{ pains | default('_С какими проблемами сталкивается при текущем подходе_') }}
+
+### Выгоды
+
+{{ gains | default('_Что хочет получить от продукта_') }}
+
+## Работа
+
+### Роль
+
+{{ role_description | default('_Что делает и за что отвечает_') }}
+
+### JTBD
+
+{{ jtbd_list | default('_Список работ (Jobs) для этой роли_') }}
+
+## Решение
+
+### Где можно помочь
+
+{{ help_points | default('_Точки автоматизации и улучшения_') }}
+
+### Что можно не делать
+
+{{ exclusions | default('_Что выходит за рамки продукта для этой роли_') }}
+
+### Что получит пользователь
+
+{{ value_proposition | default('_Ключевая ценность продукта для роли_') }}

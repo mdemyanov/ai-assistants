@@ -1,0 +1,69 @@
+---
+order: {{ order | default(1) }}
+title: "{{ id | default('BRQ-XX-NNN') }}: {{ title }}"
+properties:
+  - name: Тип сущности
+    value: [BRQ]
+  - name: ID
+    value: [{{ id | default('BRQ-XX-NNN') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+{% if domain %}
+  - name: Домен
+    value: [{{ domain }}]
+{% endif %}
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Приоритет
+    value: [{{ priority | default('P1') }}]
+  - name: Статус
+    value: [{{ status | default('Черновик') }}]
+  - name: Источник JTBD
+    value: [{{ source_jtbd }}]
+  - name: Связанная цель
+    value: [{{ related_goal }}]
+{% if process %}
+  - name: Процесс
+    value: [{{ process }}]
+{% endif %}
+---
+
+## Описание
+
+{{ description | default('_Описание бизнес-требования_') }}
+
+## Бизнес-обоснование
+
+### Проблема
+
+{{ problem | default('_Описание проблемы_') }}
+
+### Ожидаемый эффект
+
+{{ expected_effect | default('_Ожидаемый эффект от реализации_') }}
+
+## Критерии приёмки
+
+{{ acceptance_criteria | default('1. _Критерий 1_\n2. _Критерий 2_') }}
+
+{% if dependencies %}
+## Зависимости
+
+{{ dependencies }}
+
+{% endif %}
+{% if constraints %}
+## Ограничения
+
+{{ constraints }}
+
+{% endif %}
+## Трассировка
+
+| Артефакт | ID | Название |
+|----------|----|----------|
+{% for trace in traceability | default([]) %}
+| {{ trace.type }} | {{ trace.id }} | {{ trace.name }} |
+{% else %}
+| _тип_ | _ID_ | _название_ |
+{% endfor %}

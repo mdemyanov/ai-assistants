@@ -1,0 +1,56 @@
+---
+order: {{ order | default(1) }}
+title: {{ title }}
+properties:
+  - name: Тип сущности
+    value: [Процесс]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Владелец
+    value: [{{ owner | default('Менеджер процесса') }}]
+{% if trigger %}
+  - name: Триггер
+    value: {{ trigger }}
+{% endif %}
+---
+
+{{ description | default('_Краткое описание процесса_') }}
+
+## SIPOC
+
+| Элемент | Описание |
+|---------|----------|
+| **Supplier** | {{ supplier | default('_Кто поставляет входы_') }} |
+| **Input** | {{ input | default('_Что поступает на вход_') }} |
+| **Process** | {{ process_summary | default('_Основные шаги процесса_') }} |
+| **Output** | {{ output | default('_Что выходит_') }} |
+| **Customer** | {{ customer | default('_Кто получает результат_') }} |
+
+## Диаграмма процесса
+
+```mermaid
+{{ mermaid_diagram | default('flowchart LR\n    A[Начало] --> B[Шаг 1]\n    B --> C[Шаг 2]\n    C --> D[Конец]') }}
+```
+
+{% if steps %}
+## Шаги процесса
+
+{{ steps }}
+
+{% endif %}
+{% if roles %}
+## Роли в процессе
+
+{{ roles }}
+
+{% endif %}
+{% if kpi_details %}
+## KPI
+
+{{ kpi_details }}
+
+{% endif %}

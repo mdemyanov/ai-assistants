@@ -1,0 +1,23 @@
+---
+order: {{ order | default(1) }}
+title: "{{ id | default('F-XX-NNN-FF') }}: {{ title }}"
+properties:
+  - name: Тип сущности
+    value: [Фича]
+  - name: ID
+    value: [{{ id | default('F-XX-NNN-FF') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Эпик
+    value: [{{ epic }}]
+---
+
+## Описание
+
+{{ description | default('_Описание функциональности_') }}
+
+## User Stories
+
+<view defs="Тип сущности=Стейкхолдер&JTBD&Цель&Эпик&Фича&Процесс&Сущность&Бизнес-правило&Релиз&none,Фича={{ id }}" display="List"/>

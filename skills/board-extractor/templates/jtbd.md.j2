@@ -1,0 +1,45 @@
+---
+order: {{ order | default(1) }}
+title: {{ title }}
+properties:
+  - name: Тип сущности
+    value: [JTBD]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Стейкхолдер
+    value: [{{ stakeholder }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+  - name: Приоритет
+    value: [{{ priority | default('P2') }}]
+  - name: Тип работы
+    value: [{{ job_type | default('Functional') }}]
+  - name: Статус
+    value: [{{ status | default('Черновик') }}]
+{% if parent_job %}
+  - name: Parent Job
+    value: [{{ parent_job }}]
+{% endif %}
+---
+
+**When** {{ situation }},
+**I want to** {{ motivation }},
+**so I can** {{ outcome }}.
+
+{% if context %}
+## Контекст
+
+{{ context }}
+
+{% endif %}
+{% if sub_jobs %}
+## Sub-jobs
+
+{{ sub_jobs }}
+
+{% endif %}
+{% if related_jobs %}
+## Связанные работы
+
+{{ related_jobs }}
+{% endif %}

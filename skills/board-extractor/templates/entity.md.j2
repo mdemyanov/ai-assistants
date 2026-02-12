@@ -1,0 +1,50 @@
+---
+order: {{ order | default(1) }}
+title: {{ title }}
+properties:
+  - name: Тип сущности
+    value: [Сущность]
+  - name: Тип объекта
+    value: [{{ object_type | default('Entity') }}]
+  - name: Продукты
+    value: {{ products | default('[SIM]') }}
+  - name: Домен
+    value: [{{ domain | default('Core домен') }}]
+  - name: Sub домен
+    value: [{{ sub_domain }}]
+---
+
+{{ description | default('_Описание доменного объекта_') }}
+
+## Атрибуты
+
+| Атрибут | Тип | Описание | Обязательный |
+|---------|-----|----------|--------------|
+{% for attr in attributes | default([]) %}
+| {{ attr.name }} | {{ attr.type }} | {{ attr.description }} | {{ attr.required | default('Нет') }} |
+{% else %}
+| _название_ | _тип_ | _описание_ | Да/Нет |
+{% endfor %}
+
+## Связи
+
+{% if relations %}
+{{ relations }}
+{% else %}
+| Связь | Объект | Тип | Описание |
+|-------|--------|-----|----------|
+| _название_ | _объект_ | 1:N / N:M | _описание_ |
+{% endif %}
+
+{% if business_rules %}
+## Бизнес-правила
+
+{{ business_rules }}
+
+{% endif %}
+{% if invariants %}
+## Инварианты
+
+{{ invariants }}
+
+{% endif %}
