@@ -15,6 +15,7 @@ import sys
 import json
 import subprocess
 import logging
+import argparse
 from pathlib import Path
 from typing import Optional, Dict, List, Tuple
 from datetime import datetime
@@ -51,6 +52,44 @@ def print_warning(text: str) -> None:
     """Вывести предупреждение."""
     print(f"{Colors.YELLOW}⚠ {text}{Colors.ENDC}")
 
+def parse_arguments() -> argparse.Namespace:
+    """Парсинг CLI аргументов для автоматической установки."""
+    parser = argparse.ArgumentParser(
+        description="Установщик AI-ассистента для руководителя (Executive Assistant Creator)"
+    )
+    parser.add_argument(
+        '--role',
+        type=str,
+        choices=['CTO', 'CPO', 'COO', 'CFO', 'HR', 'PM'],
+        help='Роль пользователя (CTO/CPO/COO/CFO/HR/PM)'
+    )
+    parser.add_argument(
+        '--vault-name',
+        type=str,
+        help='Название vault (например, CTO_Vault)'
+    )
+    parser.add_argument(
+        '--vault-path',
+        type=str,
+        help='Путь к vault (например, ~/Documents/CTO_Vault)'
+    )
+    parser.add_argument(
+        '--owner-name',
+        type=str,
+        help='Имя владельца vault (для кастомизации)'
+    )
+    parser.add_argument(
+        '--owner-id',
+        type=str,
+        help='ID владельца (slug для папок, например, mdemyanov)'
+    )
+    parser.add_argument(
+        '--non-interactive',
+        action='store_true',
+        help='Неинтерактивный режим (требует все параметры через CLI)'
+    )
+    return parser.parse_args()
+
 def setup_logging(log_file: Path) -> logging.Logger:
     """Настроить логирование."""
     logger = logging.getLogger(__name__)
@@ -74,10 +113,24 @@ def validate_vault_path(path_str: str) -> bool:
     path = Path(path_str).expanduser()
     return path.exists() and path.is_dir()
 
-def input_with_validation(prompt: str, validator=None, retry_count: int = 3) -> Optional[str]:
+def input_with_validation(prompt: str, validator=None, retry_count: int = 3, default: Optional[str] = None) -> Optional[str]:
     """Получить ввод пользователя с валидацией."""
+    # Если есть default - использовать его без запроса
+    if default is not None:
+        if validator is None or validator(default):
+            return default
+        else:
+            print_warning(f"Default значение '{default}' невалидно, запрашиваю ввод")
+
     for attempt in range(retry_count):
-        value = input(f"{Colors.BLUE}➜ {prompt}{Colors.ENDC} ").strip()
+        prompt_text = f"{Colors.BLUE}➜ {prompt}{Colors.ENDC} "
+        if default:
+            prompt_text = f"{Colors.BLUE}➜ {prompt} [{default}]{Colors.ENDC} "
+        value = input(prompt_text).strip()
+
+        # Если пустой ввод и есть default - использовать default
+        if not value and default:
+            return default
 
         if not value:
             print_warning(f"Пожалуйста, введите значение (попыток осталось: {retry_count - attempt - 1})")
@@ -90,40 +143,76 @@ def input_with_validation(prompt: str, validator=None, retry_count: int = 3) -> 
 
     return None
 
-def collect_user_input() -> Dict[str, str]:
-    """Собрать интерактивный ввод от пользователя."""
+def collect_user_input(args: Optional[argparse.Namespace] = None) -> Dict[str, str]:
+    """Собрать ввод от пользователя (интерактивный или из CLI аргументов)."""
     print_header("⚙️  Настройка AI-ассистента Executive")
 
+    # Если переданы CLI аргументы - использовать их
+    if args and args.non_interactive:
+        # В неинтерактивном режиме все параметры обязательны
+        required = ['role', 'vault_name', 'vault_path', 'owner_name']
+        missing = [p for p in required if not getattr(args, p.replace('-', '_'), None)]
+        if missing:
+            print_error(f"В неинтерактивном режиме требуются параметры: {', '.join(missing)}")
+            sys.exit(1)
+
+        config = {
+            "role": args.role.upper(),
+            "vault_name": args.vault_name,
+            "vault_path": Path(args.vault_path).expanduser().as_posix(),
+            "owner_name": args.owner_name,
+            "owner_id": args.owner_id or "user",
+        }
+        print_success("Конфигурация загружена из CLI аргументов")
+        return config
+
+    # Интерактивный режим (с возможностью использования defaults из CLI)
     # Роль пользователя
     print_info("Выберите роль: CTO, CPO, COO, CFO, HR, PM")
-    role = input_with_validation("Роль:", lambda x: validate_role(x))
+    default_role = args.role if args and args.role else None
+    if default_role:
+        print_info(f"По умолчанию: {default_role}")
+    role = input_with_validation("Роль:", lambda x: validate_role(x), default=default_role)
     if not role:
         print_error("Не удалось получить роль. Прерывание.")
         sys.exit(1)
 
     # Название vault
-    vault_name = input_with_validation("Название vault (например, CTO_Vault):")
+    default_vault_name = args.vault_name if args and args.vault_name else None
+    if default_vault_name:
+        print_info(f"По умолчанию: {default_vault_name}")
+    vault_name = input_with_validation("Название vault (например, CTO_Vault):", default=default_vault_name)
     if not vault_name:
         print_error("Не удалось получить название vault. Прерывание.")
         sys.exit(1)
 
     # Путь к vault
+    default_vault_path = args.vault_path if args and args.vault_path else None
+    if default_vault_path:
+        print_info(f"По умолчанию: {default_vault_path}")
     vault_path = input_with_validation(
         "Путь к vault (например, ~/Documents/vault):",
-        lambda x: validate_vault_path(x)
+        lambda x: validate_vault_path(x),
+        default=default_vault_path
     )
     if not vault_path:
         print_error("Путь к vault не существует или невалиден. Прерывание.")
         sys.exit(1)
 
     # Owner name
-    owner_name = input_with_validation("Ваше имя (для кастомизации):")
+    default_owner_name = args.owner_name if args and args.owner_name else None
+    if default_owner_name:
+        print_info(f"По умолчанию: {default_owner_name}")
+    owner_name = input_with_validation("Ваше имя (для кастомизации):", default=default_owner_name)
     if not owner_name:
         print_error("Не удалось получить имя. Прерывание.")
         sys.exit(1)
 
     # Owner ID
-    owner_id = input_with_validation("Ваш ID (опционально, например, user@company.com):")
+    default_owner_id = args.owner_id if args and args.owner_id else None
+    if default_owner_id:
+        print_info(f"По умолчанию: {default_owner_id}")
+    owner_id = input_with_validation("Ваш ID (опционально, например, user@company.com):", default=default_owner_id)
     if not owner_id:
         owner_id = "user"
 
@@ -468,6 +557,9 @@ def run_child_script(script_name: str, args: List[str], logger: logging.Logger, 
 
 def main():
     """Главная функция."""
+    # Парсинг CLI аргументов
+    args = parse_arguments()
+
     # Найти директорию скриптов
     scripts_dir = Path(__file__).parent
     vault_parent = scripts_dir.parent.parent.parent  # Перейти из scripts в root
@@ -480,8 +572,8 @@ def main():
     print_info(f"Log файл: {log_file}")
 
     try:
-        # 1. Собрать интерактивный ввод
-        config = collect_user_input()
+        # 1. Собрать ввод (интерактивный или из CLI)
+        config = collect_user_input(args)
         logger.info(f"Конфигурация собрана: {config}")
 
         vault_path = Path(config['vault_path'])

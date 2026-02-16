@@ -7,6 +7,8 @@ author: Max Demyanov
 status: active
 type: skill
 tags: [skill, assistant, executive, onboarding, obsidian, aigrep, johnny-decimal, automation]
+source: https://github.com/mdemyanov/ai-assistants
+source_path: skills/executive-assistant-creator
 ---
 
 # Executive Assistant Creator
