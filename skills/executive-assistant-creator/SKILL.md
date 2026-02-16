@@ -1,11 +1,50 @@
 ---
 name: executive-assistant-creator
-description: Создание персонального AI-ассистента для руководителя через структурированный процесс. Используй когда пользователь просит настроить ассистента для своей роли, создать системный промт для руководителя, организовать базу знаний Obsidian, адаптировать под CTO/CPO/COO/HR/PM, или говорит "хочу AI-ассистента как у тебя", "помоги настроить Claude под мою работу".
+description: Автоматическое создание и установка персонального AI-ассистента для руководителя. Устанавливает 7 навыков (aigrep, correspondence-2, meeting-prep/debrief, tg-parser, xlsx, docx), создаёт структуру vault по Johnny Decimal (00-99), генерирует системный промт и настраивает MCP серверы. Используй когда пользователь просит настроить полноценного ассистента для роли CTO/CPO/COO/HR/PM, организовать базу знаний, или говорит "хочу AI-ассистента как у тебя", "помоги настроить Claude под мою работу", "установи мне ассистента".
 ---
 
 # Executive Assistant Creator
 
-Создание персонального AI-ассистента для руководителя через 5 этапов: определение роли → структура базы → системный промт → CLAUDE.md → техническая настройка.
+**Версия:** 2.0.0
+
+Автоматическое создание персонального AI-ассистента для руководителя через 6 этапов: определение роли → структура базы (Johnny Decimal 00-99) → системный промт → CLAUDE.md → автоматическая установка 7 навыков → техническая настройка MCP.
+
+## Быстрый старт для новых пользователей
+
+**Цель:** Получить полностью настроенного ассистента за 15-30 минут.
+
+### Что установится автоматически:
+
+- ✅ Структура vault по Johnny Decimal (00-99)
+- ✅ 7 навыков: aigrep, correspondence-2, meeting-prep, meeting-debrief, tg-parser, xlsx, docx
+- ✅ Системный промт с контекстом вашей роли
+- ✅ CLAUDE.md с настройками для skills
+- ✅ MCP серверы (aigrep)
+
+### Предварительные требования:
+
+1. **Ollama** установлен (для aigrep) — [ollama.com](https://ollama.com)
+2. **UV** установлен (для Python зависимостей) — `curl -LsSf https://astral.sh/uv/install.sh | sh`
+3. **Claude Desktop** установлен
+
+### Быстрая установка:
+
+```bash
+# 1. Клонировать репозиторий
+git clone https://github.com/mdemyanov/ai-assistants.git
+cd ai-assistants/skills/executive-assistant-creator
+
+# 2. Запустить установочный скрипт
+python3 scripts/install_assistant.py
+
+# 3. Следовать интерактивным инструкциям (роль, vault_name, путь)
+
+# 4. Перезапустить Claude Desktop
+```
+
+**Время установки:** 15-30 минут (в зависимости от интернета и системы).
+
+---
 
 ## Концепция
 
@@ -20,6 +59,8 @@ AI-ассистент — это **советник**, не исполнител
 | **Стратегический советник** | Анализ ситуаций, генерация альтернатив, критика решений |
 | **Аналитик контекста** | Поиск информации, подготовка к встречам, отслеживание связей |
 | **Инструмент обработки** | Документы по шаблонам, обработка транскриптов, структурирование |
+
+---
 
 ## Workflow
 
@@ -37,30 +78,33 @@ AI-ассистент — это **советник**, не исполнител
 
 ### Этап 2: Выбор структуры базы знаний
 
-Предложить структуру на основе роли. Базовый шаблон:
+Предложить структуру на основе **Johnny Decimal** (00-99). Базовый шаблон:
 
 ```
 Vault/
-├── 01_CONTEXT/           # Роль, ограничения, стейкхолдеры
-├── 02_DOMAIN/            # Предметная область (адаптировать под роль)
-├── 03_METHODOLOGY/       # Методологии и чек-листы
-├── 04_TEMPLATES/         # Шаблоны документов
-├── 05_DECISIONS/         # История решений
-├── 06_CURRENT/           # Текущие приоритеты
-├── 07_PEOPLE/            # Люди и встречи
+├── 00_CORE/              # Идентичность, стратегия, стейкхолдеры
+├── 10_PEOPLE/            # Люди, профили, 1-1 встречи
+├── 20_MEETINGS/          # Комитеты, стендапы
+├── 30_PROJECTS/          # Проекты (active, backlog, archive)
+├── 40_DECISIONS/         # ADR, политики, decision journal
+├── 50_KNOWLEDGE/         # Методологии, процессы, глоссарий
+├── 60_DOMAIN/            # Доменный модуль (адаптировать под роль)
+├── 90_TEMPLATES/         # Шаблоны документов
+├── 99_ARCHIVE/           # Архив завершённого
 ├── Dashboard.md
 ├── CLAUDE.md
 └── SYSTEM_PROMPT.md
 ```
 
-**Адаптация 02_DOMAIN/ под роль:**
-- CTO → `02_TECHNOLOGY/` (platforms, products, architecture)
-- CPO → `02_PRODUCTS/` (roadmaps, research, metrics)
-- COO → `02_OPERATIONS/` (processes, metrics, vendors)
-- HR → `02_HR_DOMAIN/` (policies, competencies, programs)
-- PM → `02_PROJECTS/` (projects, risks, lessons)
+**Адаптация 60_DOMAIN/ под роль:**
+- CTO → `60_DOMAIN/technology/` (platforms, products, tech stack)
+- CPO → `60_DOMAIN/product/` (roadmaps, research, metrics)
+- COO → `60_DOMAIN/operations/` (processes, SLA, vendors)
+- CFO → `60_DOMAIN/finance/` (budgets, forecasts)
+- HR → `60_DOMAIN/hr/` (policies, competencies, programs)
+- PM → `60_DOMAIN/projects/` (portfolio, methodologies, risks)
 
-**Детали:** см. `references/role-adaptations.md`
+**Детали:** см. `references/johnny-decimal-guide.md` и `references/role-adaptations.md`
 
 ### Этап 3: Генерация системного промта
 
@@ -103,23 +147,98 @@ Vault/
 
 **Инструкция:** см. `references/templates/tech-setup.md`
 
+### Этап 6: Автоматическая установка (NEW в v2.0.0)
+
+**Цель:** Автоматизировать установку 7 навыков и настройку окружения.
+
+**Что делает скрипт:**
+1. Создаёт структуру vault (00-99) в указанной директории
+2. Генерирует SYSTEM_PROMPT.md с контекстом роли
+3. Генерирует CLAUDE.md с настройками для skills
+4. Устанавливает 7 навыков через прямую загрузку из GitHub:
+   - aigrep (семантический поиск)
+   - correspondence-2 (деловая переписка)
+   - meeting-prep (подготовка к встречам)
+   - meeting-debrief (постобработка встреч)
+   - tg-parser (обработка Telegram)
+   - xlsx (работа с Excel)
+   - docx (работа с Word)
+5. Настраивает MCP серверы в Claude Desktop
+6. Копирует настройки aigrep для нового vault
+7. Запускает проверку установки
+
+**Запуск:**
+```bash
+cd skills/executive-assistant-creator
+python3 scripts/install_assistant.py
+```
+
+**Интерактивный ввод:**
+- Роль (CTO/CPO/COO/CFO/HR/PM)
+- Название vault (например, "CTO_Vault")
+- Путь к vault (например, "/Users/you/Documents/CTO_Vault")
+
+**Результат:** Полностью настроенный ассистент за 15-30 минут.
+
+**Скрипты:**
+- `scripts/install_assistant.py` — главный оркестратор
+- `scripts/install_skills.py` — установка навыков
+- `scripts/setup_mcp.py` — настройка MCP
+- `scripts/copy_aigrep_config.py` — копирование настроек aigrep
+- `scripts/verify_installation.py` — проверка установки
+
 ## Формат ответа
+
+### Вариант 1: Автоматическая установка (рекомендуется)
 
 ```markdown
 ## Понимание роли
 [Резюме: роль, области, ограничения — 3-4 предложения]
 
-## Структура базы знаний
+## Структура базы знаний (Johnny Decimal 00-99)
+[Адаптированная структура с объяснением]
+
+## Быстрая установка
+
+Запустите скрипт автоматической установки:
+
+\`\`\`bash
+git clone https://github.com/mdemyanov/ai-assistants.git
+cd ai-assistants/skills/executive-assistant-creator
+python3 scripts/install_assistant.py
+\`\`\`
+
+Скрипт автоматически:
+- Создаст структуру vault (00-99)
+- Сгенерирует SYSTEM_PROMPT.md и CLAUDE.md
+- Установит 7 навыков
+- Настроит MCP серверы
+
+**Время:** 15-30 минут
+
+## Следующие шаги
+1. Перезапустить Claude Desktop
+2. Проверить что aigrep работает
+3. Добавить первые документы в vault
+```
+
+### Вариант 2: Ручная установка
+
+```markdown
+## Понимание роли
+[Резюме: роль, области, ограничения — 3-4 предложения]
+
+## Структура базы знаний (Johnny Decimal 00-99)
 [Адаптированная структура папок с пояснениями]
 
 ## Системный промт
 [Полный текст SYSTEM_PROMPT.md]
 
 ## CLAUDE.md
-[Полный текст]
+[Полный текст с v3.0 структурой]
 
 ## Следующие шаги
-[Пошаговая инструкция: что сделать дальше]
+[Пошаговая инструкция: ручная настройка Obsidian, aigrep, MCP]
 ```
 
 ## Принципы генерации
@@ -145,12 +264,16 @@ Vault/
 
 ## Ресурсы
 
+- `references/johnny-decimal-guide.md` — **NEW** руководство по Johnny Decimal (00-99)
 - `references/concept-guide.md` — полная концепция и архитектура
 - `references/role-adaptations.md` — адаптация под разные роли
 - `references/work-patterns.md` — паттерны эффективной работы
 - `references/templates/system-prompt-template.md` — шаблон системного промта
-- `references/templates/claude-md-template.md` — шаблон CLAUDE.md
+- `references/templates/claude-md-template.md` — **UPDATED** шаблон CLAUDE.md v3.0
 - `references/templates/tech-setup.md` — техническая настройка
+- `scripts/install_assistant.py` — **NEW** автоматическая установка
+- `scripts/install_skills.py` — **NEW** установка 7 навыков
+- `scripts/setup_mcp.py` — **NEW** настройка MCP серверов
 
 ## Антипаттерны
 
@@ -159,3 +282,6 @@ Vault/
 - ❌ Слишком длинный промт (>1500 слов) — детали в файлы
 - ❌ AI как исполнитель, а не советник
 - ❌ Отсутствие принципа "критика важнее согласия"
+- ❌ **NEW** Использование старой структуры (01-07) вместо Johnny Decimal (00-99)
+- ❌ **NEW** Ручная установка навыков вместо автоматической
+- ❌ **NEW** Отсутствие контекста для skills в CLAUDE.md
