@@ -171,7 +171,7 @@ AI-ассистент — это **советник**, не исполнител
 ```
 Vault/
 ├── 00_CORE/              # Идентичность, стратегия, стейкхолдеры
-├── 10_PEOPLE/            # Люди, профили, 1-1 встречи
+├── 10_PEOPLE/            # Люди, профили, 1-1 встречи (см. references/people-management.md)
 ├── 20_MEETINGS/          # Комитеты, стендапы
 ├── 30_PROJECTS/          # Проекты (active, backlog, archive)
 ├── 40_DECISIONS/         # ADR, политики, decision journal
@@ -353,7 +353,8 @@ uvx scripts/install_assistant.py
 
 ## Ресурсы
 
-- `references/johnny-decimal-guide.md` — **NEW** руководство по Johnny Decimal (00-99)
+- `references/people-management.md` — **NEW** правила организации папки людей (10_PEOPLE): форматы профилей, 1-1 встреч, именование, жизненный цикл
+- `references/johnny-decimal-guide.md` — руководство по Johnny Decimal (00-99)
 - `references/concept-guide.md` — полная концепция и архитектура
 - `references/role-adaptations.md` — адаптация под разные роли
 - `references/work-patterns.md` — паттерны эффективной работы
