@@ -39,7 +39,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Работа с базой знаний (aigrep) | `skills/aigrep/SKILL.md` |
 | Обработать Telegram экспорт | `skills/tg-parser/SKILL.md` |
 | Отредактировать текст / убрать ИИ | `skills/infoinstyle/SKILL.md` |
-| Работа с документацией Gramax | `skills/gramax/SKILL.md` |
+| Создание/редактирование документов Gramax | `plugins/gramax/skills/writer/SKILL.md` |
+| Чтение комментариев Gramax | `plugins/gramax/skills/comments-read/SKILL.md` |
+| Запись/ответы на комментарии Gramax | `plugins/gramax/skills/comments-write/SKILL.md` |
 
 ## Команды
 
@@ -57,6 +59,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `/validate` | Запусти `python3 scripts/validate_all.py skills/` |
 | `/update <skill>` | Обнови skill из source: `python3 scripts/update_skill.py skills/<skill>` |
 | `/edit` | Читай `skills/infoinstyle/SKILL.md` → редактируй текст в инфостиле |
+| `/gramax:writer` | Skill writer плагина gramax (создание/редактирование документов) |
+| `/gramax:comments-read <path>` | Skill comments-read — отчёт по комментариям |
+| `/gramax:comments-write <path>` | Skill comments-write — добавить/ответить на комментарий |
 
 ### Алиасы
 
