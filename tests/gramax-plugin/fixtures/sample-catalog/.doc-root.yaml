@@ -1,0 +1,8 @@
+code: SAMPLE
+title: Sample Catalog
+description: Тестовый каталог для проверки validate_structure.
+style: black
+language: ru
+supportedLanguages:
+  - ru
+syntax: XML
