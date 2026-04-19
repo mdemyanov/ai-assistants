@@ -60,7 +60,7 @@ SORT status ASC, file.name ASC
 - [[aigrep/_meta|aigrep]] — Работа с базами знаний через aigrep MCP (SQLite + LanceDB, семантический поиск)
 - [[tg-parser/_meta|tg-parser]] — Обработка экспортов Telegram Desktop (MCP + CLI, дайджесты, фильтрация, chunking)
 - [[infoinstyle/_meta|infoinstyle]] — Адаптация текстов под инфостиль (убрать ИИ-паттерны, канцелярит, добавить конкретику)
-- [[gramax/_meta|gramax]] — Создание и редактирование документации Gramax (markdown + XML-блоки)
+- **Plugin: gramax v1.0.0** — `plugins/gramax/` — 3 skills: writer, comments-read, comments-write + 6 scripts (drawio_convert, slugify, validate_structure, parse_comments, gen_comment_id, validate_comments). Установка: `/plugin marketplace add mdemyanov/ai-assistants` → `/plugin install gramax@ai-assistants`
 
 ### Шаблоны
 - [[prompt-template]] — Шаблон для системных промтов
@@ -88,6 +88,15 @@ SORT status ASC, file.name ASC
 ---
 
 ## Changelog
+
+### 2026-04-19 — Преобразовали skill `gramax` → plugin `gramax` v1.0.0
+
+- `plugins/gramax/skills/writer` (расширенный writer: drawio, staging, structure)
+- `plugins/gramax/skills/comments-read` (операционный workflow чтения)
+- `plugins/gramax/skills/comments-write` (add/reply/edit/delete с превью)
+- 6 скриптов PEP 723 в `plugins/gramax/scripts/`
+- `.claude-plugin/marketplace.json` — marketplace-манифест
+- Архив: `archive/gramax-v1.0.0/` с `MIGRATION.md`
 
 ### 2026-02-04
 - Добавлен промт [[med-proofreader_v1.0.0]] v1.0.0:
