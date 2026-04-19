@@ -1,0 +1,16 @@
+{
+  "name": "ai-assistants",
+  "owner": {
+    "name": "mdemyanov",
+    "email": "qutask@gmail.com",
+    "url": "https://github.com/mdemyanov"
+  },
+  "plugins": [
+    {
+      "name": "gramax",
+      "source": "./plugins/gramax",
+      "description": "Создание и редактирование документации в формате Gramax. Включает работу с комментариями (чтение/запись), конвертацию диаграмм Draw.io, валидацию структуры каталогов.",
+      "version": "1.0.0"
+    }
+  ]
+}
