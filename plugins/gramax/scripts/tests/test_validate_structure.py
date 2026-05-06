@@ -1,4 +1,9 @@
-"""Smoke tests for validate_structure.py."""
+"""Smoke tests for validate_structure.py.
+
+Requires `uv` on PATH — the test invokes the validator via `uv run` to
+honor its PEP-723 inline dependencies (pyyaml). Install with
+`pip install uv` or `brew install uv`.
+"""
 
 import subprocess
 import sys
