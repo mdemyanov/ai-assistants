@@ -62,7 +62,7 @@ def load_property_schema(root: Path) -> dict[str, dict] | None:
         return None
     schema: dict[str, dict] = {}
     for p in props:
-        if not isinstance(p, dict) or "name" not in p:
+        if not isinstance(p, dict) or not p.get("name"):
             continue
         # detect experimental type: select with values: [{name: X}]
         values = p.get("values", [])
@@ -122,7 +122,7 @@ def check_frontmatter(md_file: Path, issues: list[Issue], schema: dict | None = 
     for field in ("order", "title"):
         if field not in fm:
             issues.append(Issue("error", md_file, f"frontmatter missing field: {field}"))
-    if md_file.name == "_index.md" and "properties" in fm:
+    if md_file.name == "_index.md" and fm.get("properties"):
         issues.append(Issue("error", md_file, "_index.md не должен содержать properties:"))
 
     # V3: плоская нотация — предупреждение
