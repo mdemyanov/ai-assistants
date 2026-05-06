@@ -1,8 +1,8 @@
 ---
 id: cbt-session-analyzer
-version: 1.1.0
+version: 2.0.0
 created: 2025-01-01
-updated: 2025-01-02
+updated: 2026-05-06
 author: Max Demyanov
 status: active
 type: skill

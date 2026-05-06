@@ -1,9 +1,9 @@
 ---
 id: naumen-smp-scripting
-version: 1.1.0
+version: 2.0.0
 source: library
 created: 2026-02-02
-updated: 2026-02-02
+updated: 2026-05-06
 author: mdemyanov
 status: active
 type: skill

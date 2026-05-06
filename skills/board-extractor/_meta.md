@@ -1,8 +1,8 @@
 ---
 id: board-extractor
-version: 1.0.0
+version: 2.0.0
 created: 2026-02-04
-updated: 2026-02-12
+updated: 2026-05-06
 author: Max Demyanov
 status: active
 type: skill
