@@ -6,13 +6,9 @@ Skills, системные промты и инструменты для Claude 
 
 | Skill | Описание |
 |-------|----------|
-| [aigrep](skills/aigrep/) | Работа с базами знаний через aigrep MCP (SQLite + LanceDB) |
 | [cbt-session-analyzer](skills/cbt-session-analyzer/) | Анализ КПТ-сессий для психологов |
 | [correspondence-2](skills/correspondence-2/) | Деловая переписка по методологии Карепиной |
-| [executive-assistant-creator](skills/executive-assistant-creator/) | Создание AI-ассистента для руководителя |
-| [meeting-debrief](skills/meeting-debrief/) | Постобработка встреч |
 | [meeting-insights-analyzer](skills/meeting-insights-analyzer/) | Анализ транскриптов встреч |
-| [meeting-prep](skills/meeting-prep/) | Подготовка к встречам |
 | [nau-skill-creator](skills/nau-skill-creator/) | Создание skills для Claude Desktop |
 | [prompt-creator](skills/prompt-creator/) | Создание эффективных промтов |
 | [prompt-review](skills/prompt-review/) | Анализ и улучшение промтов |
@@ -62,7 +58,7 @@ curl -sSL https://raw.githubusercontent.com/mdemyanov/ai-assistants/main/scripts
 
 ```
 .
-├── skills/               # Skills для Claude Desktop (11 шт.)
+├── skills/               # Skills для Claude Desktop
 ├── system-prompts/       # Системные промты
 ├── templates/            # Шаблоны (skill, prompt, subagent, hook)
 ├── scripts/              # CLI утилиты

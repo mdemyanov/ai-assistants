@@ -22,11 +22,6 @@ meeting-insights-analyzer/
     └── russian-patterns.md       # Русскоязычные паттерны коммуникации
 ```
 
-## Связанные материалы
-
-- [[meeting-prep/_meta|meeting-prep]] — Подготовка к встречам
-- [[meeting-debrief/_meta|meeting-debrief]] — Постобработка встреч
-
 ## Changelog
 
 ### 1.0.0 (2025-12-05)

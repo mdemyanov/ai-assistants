@@ -34,9 +34,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Создать субагент | `skills/nau-skill-creator/references/subagents.md` |
 | Создать хук | `skills/nau-skill-creator/references/hooks.md` |
 | Написать письмо | `skills/correspondence-2/SKILL.md` |
-| Подготовиться к встрече | `skills/meeting-prep/SKILL.md` |
-| Обработать встречу | `skills/meeting-debrief/SKILL.md` |
-| Работа с базой знаний (aigrep) | `skills/aigrep/SKILL.md` |
 | Обработать Telegram экспорт | `skills/tg-parser/SKILL.md` |
 | Отредактировать текст / убрать ИИ | `skills/infoinstyle/SKILL.md` |
 | Создание/редактирование документов Gramax | `plugins/gramax/skills/writer/SKILL.md` |
@@ -55,7 +52,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `/list` | Покажи содержимое `REGISTRY.md` |
 | `/status` | Покажи структуру проекта и доступные skills |
 | `/release` | Создай релиз: `git tag v[X.Y.Z] && git push --tags` |
-| `/search <query>` | Поиск в базе знаний через aigrep (vault: `ai-assistants`) |
 | `/validate` | Запусти `python3 scripts/validate_all.py skills/` |
 | `/update <skill>` | Обнови skill из source: `python3 scripts/update_skill.py skills/<skill>` |
 | `/edit` | Читай `skills/infoinstyle/SKILL.md` → редактируй текст в инфостиле |
@@ -107,17 +103,6 @@ ruff check skills/ scripts/ --ignore E501
 # Линтинг shell-скриптов (опционально)
 shellcheck scripts/*.sh
 ```
-
-## Быстрый поиск (aigrep)
-
-Vault: `ai-assistants`
-
-| Задача | Команда |
-|--------|---------|
-| Найти skill | `search_vault("ai-assistants", "skill-name")` |
-| По типу | `search_vault("ai-assistants", "type:skill")` |
-| Изменения за неделю | `recent_changes("ai-assistants", days=7)` |
-| Статистика vault | `vault_stats("ai-assistants")` |
 
 ## Хуки
 
