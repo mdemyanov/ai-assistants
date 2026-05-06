@@ -141,6 +141,34 @@ properties:
 
 Встречается в старых каталогах. Gramax парсит, но рендерит непредсказуемо при несовпадении регистра ключей. **Не использовать в новом контенте.** При работе с legacy — мигрировать пакетно.
 
+## `.doc-root.yaml` — кратко
+
+Конфигурация каталога. Лежит в корне.
+
+```yaml
+title: My catalog
+description: Описание для каталог-листа
+language: ru
+syntax: XML
+
+properties:
+  - name: Тип контента
+    type: Enum
+    style: green
+    icon: file-text
+    values: [Требование, ADR, Архитектура]
+
+filterProperties: [Тип контента]
+```
+
+**Ключевое:**
+- `properties` — список **объектов** с `name/type/style/icon/values`. То же `name:` используется в frontmatter статей.
+- `style:` — цвет бейджа property (`green`, `blue`, `purple`, etc.). Палитра из 11 значений.
+- `icon:` — любая иконка из Lucide (`https://lucide.dev/icons`).
+- `filterProperties` — имена property, отображаемых в боковой панели фильтров.
+
+Полный справочник (все ключи, палитра, антипаттерны) → `references/doc-root-schema.md`.
+
 ## Нейминг файлов и папок
 
 Правила:
@@ -172,6 +200,11 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/slugify.py --filename "Что нового?
 - На раздел: `[Название](./features/_index)`
 - На вложения (с расширением): `./diagram.png`, `./file.pdf`
 - Кросс-каталожные: `[Название](project/Document/DOC-000XXX#якорь)`
+
+**Cross-каталожные ссылки:** только inline code, не markdown link. Gramax не резолвит markdown-ссылки между разными `.doc-root.yaml`-каталогами:
+
+❌ `[Документ](other-catalog/path/to/file.md)` — не работает
+✅ `` `other-catalog/path/to/file.md` `` — работает (читается как путь)
 
 ## Изображения
 
@@ -216,13 +249,29 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/drawio_convert.py input.drawio output.svg
 |------|-----------|------------|
 | Заметка | `<note type="tip">...</note>` | Callout (tip/info/warning/danger/...) |
 | Табы | `<tabs><tab name="A">...</tab></tabs>` | Переключаемые вкладки |
-| Список дочерних | `<view defs="hierarchy=none" display="List"/>` | Генерация списка в `_index.md` |
+| `<view>` | См. ниже | Динамический список с фильтрами по property |
 | Сниппет | `<snippet id="name"/>` | Вставка из `.gramax/snippets/` |
 | OpenAPI | `<openapi src="./api.yaml"/>` | Спецификация API |
 | Mermaid | `<mermaid path="./diagram.mermaid" width="800px" height="450px"/>` | Диаграмма Mermaid |
 | Видео | `<video path="URL"/>` | Встроенное видео |
 | Иконка | `<icon code="lucide-name"/>` | Lucide-иконка |
 | HTML | `<html>...</html>` | Сырой HTML |
+
+### Дашборды через `<view>`
+
+Используется в `_index.md` для списков статей с фильтрацией и группировкой:
+
+```markdown
+<view defs="Тип контента=ADR&Архитектура&none" groupby="Статус" display="List"/>
+```
+
+- `defs="<property>=<v1>&<v2>&none"` — фильтр по property; `none` означает «и статьи без значения». Несколько фильтров через `,`.
+- `groupby="<property>"` — группировка результата.
+- `display="List"` — представление.
+
+**Когда использовать:** в корневом `_index.md` каталога (дашборд всех статей) или в крупных разделах (>20 статей). Малые разделы (<10 статей) — избыточно.
+
+Подробности и примеры → `references/blocks.md`.
 
 **UI-токены:** `[cmd:Label]`, `[kbd:Ctrl+S]`, `[alfa]`, `[beta]`
 
@@ -260,3 +309,8 @@ uv run ${CLAUDE_PLUGIN_ROOT}/scripts/validate_structure.py <path> --fix --yes   
 - `references/drawio.md` — конвертация `.drawio` → SVG, алгоритм, отладка
 - `references/structure.md` — операции со структурой (добавить/переместить/превратить страницу в раздел)
 - `references/staging.md` — pre-publish checklist
+- `references/doc-root-schema.md` — полный справочник `.doc-root.yaml`
+
+## Production эталоны
+
+Канонический референс структуры — `/Users/mdemyanov/Devel/naumen-ecosystem/business-requirements/`. Production-каталог бизнес-документации SMRM (200+ JTBD/BRQ/процессов): object-нотация frontmatter, `style:` + `icon:` на каждом property, `<view>`-дашборды в `_index.md`. При сомнениях о формате — сверяйся с этим эталоном.
