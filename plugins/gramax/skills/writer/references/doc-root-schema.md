@@ -1,4 +1,4 @@
-# `.doc-root.yaml` — schema reference
+# `.doc-root.yaml` — справочник схемы
 
 Конфигурация каталога Gramax. Лежит в корне (рядом с `.doc-root.yaml` НЕ должно быть `_index.md`).
 
@@ -11,7 +11,7 @@
 | `language` | string | да | Основной язык (`ru` / `en`) |
 | `syntax` | enum | да | `XML` (активирует `<note>`, `<tabs>`, `<view>`) или `Markdown` |
 | `code` | string | нет | Короткий идентификатор каталога (для cross-каталожных ссылок) |
-| `style` | string | нет | Цвет заголовка каталога: `blue`, `blue-green`, `green`, `purple` etc. |
+| `style` | string | нет | Цвет заголовка каталога. Палитра — та же, что для property-level `style:` (см. ниже). |
 | `supportedLanguages` | array | нет | Список поддерживаемых языков; `[]` = без ограничений |
 | `properties` | array | нет | Определения property для frontmatter (см. ниже) |
 | `filterProperties` | array | нет | Имена property для боковой панели фильтров: `[Тип контента, Фаза]` |
@@ -39,6 +39,8 @@ properties:
 | `values` | для `Enum` | Массив строк — допустимые значения |
 
 ## Палитра `style:`
+
+Применяется к двум уровням: к корневому ключу `style:` (цвет заголовка каталога) и к property-level `style:` (цвет бейджа property). Список валидных значений общий.
 
 Подтверждённые в production-эталоне `naumen-ecosystem/business-requirements/.doc-root.yaml`:
 

@@ -147,7 +147,7 @@ properties:
 
 ```yaml
 title: My catalog
-description: Описание для каталог-листа
+description: Описание каталога
 language: ru
 syntax: XML
 
