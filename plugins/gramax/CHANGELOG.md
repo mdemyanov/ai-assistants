@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.1.0 — 2026-05-06
+
+Schema alignment с production-эталоном `naumen-ecosystem/business-requirements/`. Закрывает 8 из 9 находок из `pg_vector_service/docs/gramax-skills-update.md` (см. ADR-028 проекта pg_vector_service).
+
+### Документация writer-skill
+- Frontmatter явно разделён на статьи (object-нотация `properties: [- name/value: [...]]`) и `_index.md` (без `properties:`).
+- Антипаттерн плоской нотации помечен как LEGACY.
+- Подпапки обязаны содержать `_index.md` (без него Gramax не строит навигацию).
+- Новый `references/doc-root-schema.md`: полный справочник конфигурации каталога — корневые ключи, property-определение, палитра `style:` (11 значений), Lucide-иконки, антипаттерны.
+- В SKILL.md добавлен компактный раздел `.doc-root.yaml — кратко` со ссылкой на полный справочник.
+- Расширен `<view>`: атрибуты `defs`/`groupby`/`display`, синтаксис фильтров, примеры из эталона.
+- Cross-каталожные ссылки документированы как inline code (markdown link не резолвится Gramax-ом).
+- Новая секция Production эталоны указывает на `naumen-ecosystem/business-requirements/` как канонический референс.
+
+### Валидация
+- `validate_structure.py` — пять новых проверок:
+  - V1 (error): подпапки с `.md` обязаны иметь `_index.md`.
+  - V2 (error): `_index.md` не должен содержать `properties:`.
+  - V3 (warning): обнаружение устаревшей плоской нотации frontmatter.
+  - V4 (error): `properties.name` должен быть объявлен в `.doc-root.yaml`.
+  - V5 (error): значение Enum-property должно входить в `values:`.
+- `code` в `.doc-root.yaml` сделано опциональным (соответствует production-эталону `business-requirements`).
+- Экспериментальный `type: select` с `values: [{name: X}]` — V4/V5 пропускаются с однократным warning.
+
+### Тесты
+- `scripts/tests/test_validate_structure.py` — smoke-тесты на фикстурах good/bad.
+- Запуск: `python3 plugins/gramax/scripts/tests/test_validate_structure.py`.
+
+### Не вошло (отложено)
+- `--migrate-frontmatter` CLI — отдельный спек, когда возникнет конкретный кандидат миграции.
+
 ## 1.0.0 — 2026-04-19
 
 Первая версия плагина. Замещает монолитный `skills/gramax/` (архивирован в `archive/gramax-v1.0.0/`).
