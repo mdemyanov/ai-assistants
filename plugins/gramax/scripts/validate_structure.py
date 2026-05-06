@@ -39,15 +39,66 @@ def check_doc_root(root: Path, issues: list[Issue]) -> bool:
     except yaml.YAMLError as e:
         issues.append(Issue("error", yaml_file, f"invalid yaml: {e}"))
         return False
-    for field in ("code", "title", "language", "syntax"):
+    for field in ("title", "language", "syntax"):
         if not isinstance(data, dict) or field not in data:
             issues.append(Issue("error", yaml_file, f"missing field: {field}"))
     return True
 
 
+def load_property_schema(root: Path) -> dict[str, dict] | None:
+    """Возвращает {property_name: {type, values}} из .doc-root.yaml.
+
+    None — если schema нечитабельна или содержит экспериментальный type: select.
+    """
+    yaml_file = root / ".doc-root.yaml"
+    try:
+        data = yaml.safe_load(yaml_file.read_text(encoding="utf-8"))
+    except yaml.YAMLError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    props = data.get("properties", [])
+    if not isinstance(props, list):
+        return None
+    schema: dict[str, dict] = {}
+    for p in props:
+        if not isinstance(p, dict) or "name" not in p:
+            continue
+        # detect experimental type: select with values: [{name: X}]
+        values = p.get("values", [])
+        if any(isinstance(v, dict) for v in values):
+            return None
+        schema[p["name"]] = {
+            "type": p.get("type", "String"),
+            "values": [str(v) for v in values],
+        }
+    return schema
+
+
 def check_no_index_in_root(root: Path, issues: list[Issue]):
     if (root / "_index.md").exists():
         issues.append(Issue("error", root / "_index.md", "_index.md not allowed in catalog root (next to .doc-root.yaml)"))
+
+
+def check_subfolders_have_index(root: Path, issues: list[Issue]):
+    """V1: каждая подпапка с .md или вложенными папками обязана иметь _index.md."""
+    for subdir in root.rglob("*"):
+        if not subdir.is_dir():
+            continue
+        if ".gramax" in subdir.parts:
+            continue
+        if subdir == root:
+            continue
+        # has any .md file or any subdirectory inside
+        has_content = any(
+            child.is_dir() or (child.is_file() and child.suffix == ".md")
+            for child in subdir.iterdir()
+            if child.name != "_index.md"
+        )
+        if not has_content:
+            continue
+        if not (subdir / "_index.md").exists():
+            issues.append(Issue("error", subdir, "missing _index.md (Gramax не покажет раздел в навигации)"))
 
 
 def extract_frontmatter(text: str) -> dict | None:
@@ -62,7 +113,7 @@ def extract_frontmatter(text: str) -> dict | None:
         return None
 
 
-def check_frontmatter(md_file: Path, issues: list[Issue]):
+def check_frontmatter(md_file: Path, issues: list[Issue], schema: dict | None = None):
     text = md_file.read_text(encoding="utf-8")
     fm = extract_frontmatter(text)
     if fm is None:
@@ -71,6 +122,49 @@ def check_frontmatter(md_file: Path, issues: list[Issue]):
     for field in ("order", "title"):
         if field not in fm:
             issues.append(Issue("error", md_file, f"frontmatter missing field: {field}"))
+    if md_file.name == "_index.md" and "properties" in fm:
+        issues.append(Issue("error", md_file, "_index.md не должен содержать properties:"))
+
+    # V3: плоская нотация — предупреждение
+    if md_file.name != "_index.md" and "properties" in fm:
+        props = fm["properties"]
+        if isinstance(props, list):
+            for entry in props:
+                if isinstance(entry, dict) and "name" not in entry:
+                    issues.append(
+                        Issue("warning", md_file,
+                              "устаревшая плоская нотация properties; см. SKILL.md → Frontmatter")
+                    )
+                    break
+
+    # V4, V5: properties соответствуют schema
+    if md_file.name != "_index.md" and schema is not None and "properties" in fm:
+        props = fm["properties"]
+        if isinstance(props, list):
+            for entry in props:
+                if not isinstance(entry, dict) or "name" not in entry:
+                    continue  # plain notation already reported by V3
+                pname = entry["name"]
+                if pname not in schema:
+                    issues.append(
+                        Issue("error", md_file,
+                              f'property "{pname}" не объявлен в .doc-root.yaml')
+                    )
+                    continue
+                schema_def = schema[pname]
+                if schema_def["type"] != "Enum":
+                    continue
+                allowed = schema_def["values"]
+                values = entry.get("value", [])
+                if not isinstance(values, list):
+                    values = [values]
+                for v in values:
+                    if str(v) not in allowed:
+                        issues.append(
+                            Issue("error", md_file,
+                                  f'property "{pname}" имеет значение "{v}", '
+                                  f'не входит в [{", ".join(allowed)}]')
+                        )
 
 
 def check_tags(md_file: Path, issues: list[Issue]):
@@ -115,10 +209,15 @@ def validate(root: Path, strict: bool, fix: bool, yes: bool) -> list[Issue]:
     if not check_doc_root(root, issues):
         return issues
     check_no_index_in_root(root, issues)
+    check_subfolders_have_index(root, issues)
+    schema = load_property_schema(root)
+    if schema is None:
+        issues.append(Issue("warning", root / ".doc-root.yaml",
+                            "schema использует экспериментальный формат values; V4/V5 пропущены"))
     for md in root.rglob("*.md"):
         if ".gramax" in md.parts:
             continue
-        check_frontmatter(md, issues)
+        check_frontmatter(md, issues, schema)
         check_tags(md, issues)
     check_garbage(root, issues, strict, fix, yes)
     check_no_drawio(root, issues, strict)
